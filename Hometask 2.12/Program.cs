@@ -12,9 +12,10 @@
 //        - Any ✅
 //        - All ✅
 // 3. Create queries with projection conditionals ✅
-// 4. Write extension methods that does paginating for me
+// 4. Write extension methods that does data paginating ✅
 
 
+using Hometask_2._12.ClientRequest;
 using Hometask_2._7.Entities;
 using System;
 
@@ -27,6 +28,7 @@ namespace Hometask_2._7
             //Queries();
             //SubQueries();
             //ProjectionConditionals();
+            Paginating();
         }
 
         public static void Queries()
@@ -99,6 +101,17 @@ namespace Hometask_2._7
                                             ((x.Age > 30 && x.Age < 40) ? "In Their Fourties" :
                                             (x.Age > 40) ? "In Their Fifties" : "Others")
                                         });
+        }
+
+        public static void Paginating()
+        {
+            using var context = new ScheduleDbContext();
+
+            var clientService = new ClientService(context);
+
+            var list = clientService.GetClients(new ClientRequest() { NameLength = 5, MaxAge = 30, PageIndex = 1, PageSize = 100 });
+
+            
         }
     }
 }
