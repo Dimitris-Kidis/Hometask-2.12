@@ -7,11 +7,11 @@
 //        - Aggregation ✅
 //        - Having ✅
 // 2. Create subqueries with:
-//        - In
-//        - Exists
-//        - Any
-//        - All
-// 3. Create queries with projection conditionals
+//        - In ✅
+//        - Exists ✅
+//        - Any ✅
+//        - All ✅
+// 3. Create queries with projection conditionals ✅
 // 4. Write extension methods that does paginating for me
 
 
@@ -24,12 +24,14 @@ namespace Hometask_2._7
     {
         public static void Main(string[] args)
         {
-            Queries();
+            //Queries();
+            //SubQueries();
+            //ProjectionConditionals();
         }
 
         public static void Queries()
         {
-            var context = new ScheduleDbContext();
+            using var context = new ScheduleDbContext();
 
             var groupByQuery = context
                                     .Schedules
@@ -63,13 +65,40 @@ namespace Hometask_2._7
                                                 Gender = x.Key
                                             })
                                             .OrderBy(x => x.AvgAge);
+        }
+
+        public static void SubQueries()
+        {
+            using var context = new ScheduleDbContext();
 
 
+            var inQuery = context.Clients
+                            .Where(x => new[]{"Jorja Smith", "Elvis Presley", "Liza Gilbrait"}.Contains(x.FullName))
+                            .Select(x => new { x.Id, x.FullName, x.Gender, x.Age });
 
+            var anyQuery = context.Clients
+                                .Where(x => x.Schedules.Any(y => y.Price > 70) && x.Age > 30).OrderBy(x => x.Age);
 
-            var all = context.Schedules.ToList();
-            Console.WriteLine();
-                                    
+            var allQuery = context.Schedules
+                                .All(x => x.Topic != null);
+
+            var existsQuery = context.Clients
+                                .Any(x => x.FullName == "Jorja Smith");
+
+        }
+
+        public static void ProjectionConditionals()
+        {
+            using var context = new ScheduleDbContext();
+
+            var conditionals = context.Clients
+                                        .Select(x => new
+                                        {
+                                            Name = x.FullName,
+                                            Age = (x.Age > 20 && x.Age < 30) ? "In Their Thirties" :
+                                            ((x.Age > 30 && x.Age < 40) ? "In Their Fourties" :
+                                            (x.Age > 40) ? "In Their Fifties" : "Others")
+                                        });
         }
     }
 }
