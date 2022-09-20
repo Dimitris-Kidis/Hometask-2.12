@@ -31,7 +31,7 @@ namespace Hometask_2._12.ClientRequest
                 clients = clients.Where(x => x.FullName.Length > 0);
             }
             Console.WriteLine(clients);
-            return clients.OrderBy(x => x.Age).Skip(req.PageIndex * req.PageSize).Take(req.PageSize).ToList();
+            return clients.OrderBy(x => x.Age).Skip((req.PageIndex - 1) * req.PageSize).Take(req.PageSize).ToList();
 
         }
     }

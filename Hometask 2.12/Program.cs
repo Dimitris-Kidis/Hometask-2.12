@@ -50,8 +50,7 @@ namespace Hometask_2._7
                                         TimeCount = x.Count()
                                     })
                                     .Where(x => x.Date == "09/07/2022")
-                                    .OrderByDescending(x => x.TimeCount)
-                                    .Take(1);
+                                    .OrderByDescending(x => x.TimeCount);
 
 
             var groupByQuery2 = from schedules in context.Schedules.ToList()
@@ -75,8 +74,8 @@ namespace Hometask_2._7
 
 
             var inQuery = context.Clients
-                            .Where(x => new[]{"Jorja Smith", "Elvis Presley", "Liza Gilbrait"}.Contains(x.FullName))
-                            .Select(x => new { x.Id, x.FullName, x.Gender, x.Age });
+                                .Where(x => new[]{"Jorja Smith", "Elvis Presley", "Liza Gilbrait"}.Contains(x.FullName))
+                                .Select(x => new { x.Id, x.FullName, x.Gender, x.Age });
 
             var anyQuery = context.Clients
                                 .Where(x => x.Schedules.Any(y => y.Price > 70) && x.Age > 30).OrderBy(x => x.Age);
@@ -109,10 +108,14 @@ namespace Hometask_2._7
 
             var clientService = new ClientService(context);
 
-            var list = clientService.GetClients(new ClientRequest() { NameLength = 5, MaxAge = 30, PageIndex = 1, PageSize = 100 });
+            var list = clientService.GetClients(new ClientRequest() { NameLength = 20, MaxAge = 30, PageIndex = 1, PageSize = 100 });
 
             
         }
     }
 }
 
+// IQueryable (System.Linq) наслдеует от IEnumarable (System.Collections)
+// IEnumerable - перемещение по данным только вперед. Если нужно выполнить фильтрацию, она выполняется на стороне клиента
+// IQueryable - перемещение по данным как в прямом, так и в обратном направлении. Фильтрация происходит на стороне сервера. Запрос обрабатывается чуть медлененнее, чем запрос IEnumerable
+// IEnumerable чаще используется, когда нужен весь набор данных, IQueryable - когда нужен не весь набор, а только некоторый отфильтрованные данные
